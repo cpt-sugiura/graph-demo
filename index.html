@@ -52,12 +52,14 @@
 
     function drawCsvLineChart(csv, name) {
         var data = google.visualization.arrayToDataTable([
-            ['時刻（秒）', 'Val'],
+            ['時刻（秒）', 'value'],
             ...csv
         ]);
 
         var options = {
-            title:`時刻と val の折れ線グラフ（${name}）`,
+            title:`時刻と value の折れ線グラフ（${name}）`,
+            hAxis: {title: '時刻（秒）'},
+            vAxis: {title: 'value'},
             legend: {position: 'bottom'}
         };
 
