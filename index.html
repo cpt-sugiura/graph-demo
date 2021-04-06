@@ -1,0 +1,86 @@
+<html>
+<head>
+    <script type="text/javascript"
+            src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+    google.charts.load('current', {'packages': ['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    const header = ['X', 'Y'];
+    const body = [
+        [8, 12, '8_12_t.csv'],
+        [11, 14, '11_14_t.csv'],
+        [4, 5, '4_5_t.csv'],
+        [3, 35, '3_35_t.csv'],
+        [65, 7, '65_7_t.csv']
+    ];
+    const csvMock = {
+        '8_12_t.csv': [[1, 2], [1.1, 3], [1.2, 2], [1.3, 1], [1.4, 3], [1.5, 2],],
+        '11_14_t.csv': [[1, 3], [1.1, 1], [1.2, 5], [1.3, 6], [1.4, 4], [1.5, 1],],
+        '4_5_t.csv': [[1, 12], [1.1, 3], [1.2, 9], [1.3, 4], [1.4, 7], [1.5, 3],],
+        '3_35_t.csv': [[1, 10], [1.1, 2], [1.2, 7], [1.3, 2], [1.4, 9], [1.5, 5],],
+        '65_7_t.csv': [[1, 11], [1.1, 9], [1.2, 16], [1.3, 11], [1.4, 13], [1.5, 12],],
+    }
+    const renderCsv = (row) => {
+        drawCsvLineChart(csvMock[body[row][2]]);
+    }
+
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            header,
+            ...(body.map(i => [i[0], i[1]]))
+        ]);
+
+        var options = {
+            title: 'X と Y の散布図',
+            hAxis: {title: 'X', minValue: 0, maxValue: 15},
+            vAxis: {title: 'Y', minValue: 0, maxValue: 15},
+            legend: 'none'
+        };
+
+        var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+
+        google.visualization.events.addListener(chart, 'select', selectHandler);
+
+        function selectHandler() {
+            var selectedItem = chart.getSelection()[0];
+            (selectedItem.row !== null) && (selectedItem.row !== undefined) && renderCsv(selectedItem.row)
+        }
+
+        chart.draw(data, options);
+    }
+
+    function drawCsvLineChart(csv) {
+        var data = google.visualization.arrayToDataTable([
+            ['時刻（秒）', 'Val'],
+            ...csv
+        ]);
+
+        var options = {
+            title: '時刻と val の折れ線グラフ',
+            legend: {position: 'bottom'}
+        };
+
+        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+        chart.draw(data, options);
+    }
+    </script>
+</head>
+<body>
+<div style="display: flex">
+    <div id="chart_div" style="width: 50%; height: 500px;"></div>
+    <div id="curve_chart" style="width: 50%; height: 500px;">
+        <div style="
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        ">
+            <span>散布図中のデータをクリックすると対応する折れ線グラフが表示されます</span>
+        </div>
+    </div>
+</div>
+</body>
+</html>
